@@ -88,43 +88,36 @@ void leer_consola(t_log* logger)
 {
 	char* leido;
 
-	while (1) {
-		leido = readline("> ");
+	leido = readline("> ");
+	log_info(logger, "%s", leido);
 
-		if(!leido || strcmp(leido, "") == 0) {  //!leido es lo mismo que leido == NULL
-			free(leido);
-			break;
-		}
-
-		log_info(logger, "%s", leido);
+	while (strcmp(leido, "") == 0) { // 1 = true
 		free(leido);
+		leido = readline("> ");
+		log_info(logger, "%s", leido);
 	}
 
 	// El resto, las vamos leyendo y logueando hasta recibir un string vacío
 	// ¡No te olvides de liberar las lineas antes de regresar!
-
+	free(leido);
 }
 
 void paquete(int conexion)
 {
 	// Ahora toca lo divertido!
-	char* leido;
+	char* leido = NULL;
 	t_paquete* paquete = crear_paquete();
 
 	// Leemos y esta vez agregamos las lineas al paquete
-	while (1) {
-		leido = readline("> ");
-
-		if(!leido || strcmp(leido, "") == 0) {  
-			free(leido);
-			break;
-		}
-
+	leido = readline("> ");
+	while (strcmp(leido, "") == 0) {
 		agregar_a_paquete(paquete, leido, strlen(leido) + 1); // +1 por el '\0' (tamanio)
 		free(leido);
+		leido = readline("> ");
 	}
 
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
+	free(leido);
 	enviar_paquete(paquete, conexion);
 	eliminar_paquete(paquete);
 }
